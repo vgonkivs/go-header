@@ -59,15 +59,14 @@ func TestPeerTracker_GC(t *testing.T) {
 
 	err = p.stop(ctx)
 	require.NoError(t, err)
-
-	// ensure amount of peers in trackedPeers is equal to minPeerTrackerSizeBeforeGC
-	require.Len(t, p.trackedPeers, minPeerTrackerSizeBeforeGC)
+	
+	require.Len(t, p.trackedPeers, 12)
 	require.Nil(t, p.disconnectedPeers[pid3])
 
 	// ensure good peers were dumped to store
 	peers, err := pidstore.Load(ctx)
 	require.NoError(t, err)
-	require.Equal(t, minPeerTrackerSizeBeforeGC, len(peers))
+	require.Equal(t, 12, len(peers))
 }
 
 func TestPeerTracker_BlockPeer(t *testing.T) {
