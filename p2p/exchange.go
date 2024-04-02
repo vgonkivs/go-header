@@ -292,9 +292,13 @@ func (ex *Exchange[H]) GetRangeByHeight(
 			attribute.Int64("to", int64(to)),
 		))
 	defer span.End()
-	session := newSession[H](
+	session, err := newSession[H](
 		ex.ctx, ex.host, ex.peerTracker, ex.protocolID, ex.Params.RangeRequestTimeout, ex.metrics, withValidation(from),
 	)
+	// TODO(@vgonkivs): decide what to do with this error. Maybe we should fall into "discovery mode" and try to collect peers???
+	if err != nil {
+		return nil, err
+	}
 	defer session.close()
 	// we request the next header height that we don't have: `fromHead`+1
 	amount := to - (from.Height() + 1)
